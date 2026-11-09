@@ -1,0 +1,50 @@
+import axios from "axios";
+import type { Note } from "../types/note";
+
+interface FetchNotesResponse {
+  notes: Note[];
+  totalPages: number;
+}
+
+interface CreateNote {
+  title: string;
+  content: string;
+  tag: string;
+}
+
+const API = axios.create({
+  baseURL: 'https://notehub-public.goit.study/api/notes',
+})
+
+export async function fetchNotes (page: number, search: string): Promise<FetchNotesResponse> {
+  const {data} = await API.get<FetchNotesResponse>(`?page=${page}&perPage=12`, {
+    headers: {
+      'Authorization': `Bearer ${import.meta.env.VITE_NOTEHUB_TOKEN}`,
+    },
+    params: {
+      search,
+    }
+  })
+
+  return data;
+}
+
+export async function createNote (payload: CreateNote): Promise<Note> {
+  const response = await API.post<Note>('', payload, {
+    headers: {
+      'Authorization': `Bearer ${import.meta.env.VITE_NOTEHUB_TOKEN}`,
+      'Content-Type': 'application/json'
+    }
+  }); return response.data;
+}
+
+export async function deleteNote (noteId: Note['id']): Promise<void> {
+  await API.delete<Note['id']>(noteId, {
+    headers: {
+      'Authorization': `Bearer ${import.meta.env.VITE_NOTEHUB_TOKEN}`,
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+// GET https://notehub-public.goit.study/api/notes?search=mysearchtext
