@@ -17,10 +17,10 @@ interface PaginationProps {
   marginPagesDisplayed: number;
   onPageChange: (nextPage: number) => void;
   forcePage: number;
-  containerClassName: string;
-  activeClassName: string;
-  nextLabel: string;
-  previousLabel: string;
+  containerClassName?: string;
+  activeClassName?: string;
+  nextLabel?: string;
+  previousLabel?: string;
 }
 
 export default function Pagination(props: PaginationProps) {

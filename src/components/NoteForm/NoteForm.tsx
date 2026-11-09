@@ -6,7 +6,6 @@ import { createNote } from '../../services/noteService';
 
 interface NoteFormProps {
   onClose: () => void;
-  onSuccess: () => void;
 }
 
 interface NoteFormValues {
@@ -27,39 +26,47 @@ const FormValidationScheme = Yup.object({
     .max(50, 'Too long')
     .required('Title is required'),
   content: Yup.string().max(500, 'Too long'),
-  tag: Yup.string().oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping']).required('Tag is required'),
+  tag: Yup.string()
+    .oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'])
+    .required('Tag is required'),
 });
 
-export default function NoteForm({ onClose, onSuccess }: NoteFormProps) {
+export default function NoteForm({ onClose }: NoteFormProps) {
   const queryClient = useQueryClient();
 
-  const {mutate} = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['notes']})
-      onSuccess()
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      onClose();
     },
-    onError: (error) => {console.error(error)}
-  })
+    onError: error => {
+      console.error(error);
+    },
+  });
 
   function handleSubmit(
     values: NoteFormValues,
     formikHelpers: FormikHelpers<NoteFormValues>
-    ) {
-    if(values) {
-      mutate(values)
-    }
-
-    formikHelpers.resetForm();
+  ) {
+    mutate(values, {
+      onSuccess: () => {
+        formikHelpers.resetForm();
+      },
+    });
   }
 
   return (
-    <Formik initialValues={INITIAL_VALUES} validationSchema={FormValidationScheme} onSubmit={handleSubmit}>
+    <Formik
+      initialValues={INITIAL_VALUES}
+      validationSchema={FormValidationScheme}
+      onSubmit={handleSubmit}
+    >
       <Form className={css.form}>
         <div className={css.formGroup}>
           <label htmlFor="title">Title</label>
           <Field id="title" type="text" name="title" className={css.input} />
-          <ErrorMessage name="title" className={css.error} component='span'/>
+          <ErrorMessage name="title" className={css.error} component="span" />
         </div>
 
         <div className={css.formGroup}>
@@ -71,7 +78,7 @@ export default function NoteForm({ onClose, onSuccess }: NoteFormProps) {
             rows={8}
             className={css.textarea}
           />
-          <ErrorMessage name="content" className={css.error} component='span' />
+          <ErrorMessage name="content" className={css.error} component="span" />
         </div>
 
         <div className={css.formGroup}>
@@ -83,15 +90,24 @@ export default function NoteForm({ onClose, onSuccess }: NoteFormProps) {
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
           </Field>
-          <ErrorMessage name="tag" className={css.error} component='span' />
+          <ErrorMessage name="tag" className={css.error} component="span" />
         </div>
 
         <div className={css.actions}>
-          <button type="button" className={css.cancelButton} onClick={onClose}>
+          <button
+            type="button"
+            className={css.cancelButton}
+            onClick={onClose}
+            disabled={isPending}
+          >
             Cancel
           </button>
-          <button type="submit" className={css.submitButton} disabled={false}>
-            Create note
+          <button
+            type="submit"
+            className={css.submitButton}
+            disabled={isPending}
+          >
+            {isPending ? 'Creating...' : 'Create note'}
           </button>
         </div>
       </Form>

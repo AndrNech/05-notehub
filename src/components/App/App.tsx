@@ -32,7 +32,9 @@ function App() {
   }, [isSuccess, data]);  
 
   const handleSearch = useDebouncedCallback((search: string) => 
-    {setSearch(search)}, 1000);
+    {setSearch(search);
+    setPage(1)
+    }, 1000);
 
   function handlePageChange(page: number) {
     setPage(page);
@@ -66,7 +68,7 @@ function App() {
       </header>
       {isSuccess && data.notes.length > 0 && <NoteList notes={data.notes} />}
       {isModalOpen && <Modal onClose={closeModalHandler}>
-        <NoteForm onClose={closeModalHandler} onSuccess={() => setIsModalOpen(false)} />
+        <NoteForm onClose={closeModalHandler} />
       </Modal>}
     </div>
   );

@@ -38,13 +38,13 @@ export async function createNote (payload: CreateNote): Promise<Note> {
   }); return response.data;
 }
 
-export async function deleteNote (noteId: Note['id']): Promise<void> {
-  await API.delete<Note['id']>(noteId, {
+export async function deleteNote (noteId: Note['id']): Promise<Note> {
+  const response = await API.delete<Note>(noteId, {
     headers: {
       'Authorization': `Bearer ${import.meta.env.VITE_NOTEHUB_TOKEN}`,
       'Content-Type': 'application/json'
     }
-  })
+  }); return response.data;
 }
 
 // GET https://notehub-public.goit.study/api/notes?search=mysearchtext

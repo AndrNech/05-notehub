@@ -19,7 +19,7 @@ export default function Modal({ onClose, children }: ModalProps) {
     document.body.style.overflow = 'hidden';
 
     return () => {
-      window.addEventListener('keydown', escHandler);
+      window.removeEventListener('keydown', escHandler);
       document.body.style.overflow = 'auto';
     };
   }, [onClose]);
@@ -30,7 +30,9 @@ export default function Modal({ onClose, children }: ModalProps) {
     }
   };
 
-  if(document.getElementById('modal-root') === null) {
+  const modalRoot = document.getElementById('modal-root');
+
+  if(!modalRoot) {
     alert("Couldn't display modal")
     return null;
   }
@@ -46,6 +48,6 @@ export default function Modal({ onClose, children }: ModalProps) {
       {children}
       </div>
     </div>,
-    document.getElementById('modal-root') as HTMLDivElement
+    modalRoot as HTMLDivElement
   );
 }
