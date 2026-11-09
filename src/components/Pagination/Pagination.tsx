@@ -13,8 +13,8 @@ const ReactPaginate = (
 
 interface PaginationProps {
   pageCount: number;
-  pageRangeDisplayed: number;
-  marginPagesDisplayed: number;
+  pageRangeDisplayed?: number;
+  marginPagesDisplayed?: number;
   onPageChange: (nextPage: number) => void;
   forcePage: number;
   containerClassName?: string;
