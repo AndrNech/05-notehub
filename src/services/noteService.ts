@@ -17,12 +17,14 @@ const API = axios.create({
 })
 
 export async function fetchNotes (page: number, search: string): Promise<FetchNotesResponse> {
-  const {data} = await API.get<FetchNotesResponse>(`?page=${page}&perPage=12`, {
+  const {data} = await API.get<FetchNotesResponse>('', {
     headers: {
       'Authorization': `Bearer ${import.meta.env.VITE_NOTEHUB_TOKEN}`,
     },
     params: {
       search,
+      page,
+      perPage: 12
     }
   })
 
@@ -39,7 +41,7 @@ export async function createNote (payload: CreateNote): Promise<Note> {
 }
 
 export async function deleteNote (noteId: Note['id']): Promise<Note> {
-  const response = await API.delete<Note>(noteId, {
+  const response = await API.delete<Note>(`/${noteId}`, {
     headers: {
       'Authorization': `Bearer ${import.meta.env.VITE_NOTEHUB_TOKEN}`,
       'Content-Type': 'application/json'

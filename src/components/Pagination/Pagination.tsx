@@ -30,7 +30,7 @@ export default function Pagination(props: PaginationProps) {
       pageRangeDisplayed={props.pageRangeDisplayed}
       marginPagesDisplayed={props.marginPagesDisplayed}
       onPageChange={({ selected }) => props.onPageChange(selected + 1)}
-      forcePage={props.forcePage}
+      forcePage={props.forcePage > 0 ? props.forcePage - 1 : 0}
       containerClassName={css.pagination}
       activeClassName={css.active}
       nextLabel="→"

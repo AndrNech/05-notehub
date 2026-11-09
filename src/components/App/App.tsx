@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import css from './App.module.css';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { Toaster, toast } from 'react-hot-toast';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -23,11 +23,12 @@ function App() {
   const { data, isLoading, isSuccess, isError } = useQuery({
     queryKey: ['notes', page, search],
     queryFn: () => fetchNotes(page, search),
+    placeholderData: keepPreviousData,
   });
 
   useEffect(() => {
     if (isSuccess && data.notes.length === 0) {
-      toast.error("You don't have notes yet");
+      toast.error("Nothing found");
     }
   }, [isSuccess, data]);  
 
@@ -56,7 +57,7 @@ function App() {
           pageRangeDisplayed={5}
           marginPagesDisplayed={1}
           onPageChange={handlePageChange}
-          forcePage={page - 1}
+          forcePage={page}
           containerClassName={css.pagination}
           activeClassName={css.active}
           nextLabel="→"
